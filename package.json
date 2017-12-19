@@ -1,0 +1,28 @@
+{
+  "name": "latest-nodejs.org",
+  "version": "1.0.0",
+  "private": false,
+  "description": "API for downloading latest binary distributions for Node.js",
+  "keywords": [
+    "nodejs",
+    "api",
+    "latest",
+    "swagger",
+    "rummage"
+],
+  "author": "Damien Clark",
+  "license": "GPL-3.0",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.12.3",
+    "swagger-express-mw": "^0.1.0"
+  },
+  "devDependencies": {
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "swagger project test"
+  }
+}
