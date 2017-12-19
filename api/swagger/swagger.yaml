@@ -17,11 +17,44 @@ produces:
   - text/html
   - text/text
 paths:
+  /download/{os}/{arch}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest binary distribution of node.js
+      description: Download the latest LTS binary distribution of node.js given the operating system (win/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      operationId: download_os_arch
+      parameters:
+        - name: os
+          in: path
+          description: The operating system (win or macos or linux)
+          required: true
+          type: string
+          enum:
+            - win
+            - macos
+            - linux
+        - name: arch
+          in: path
+          description: Distribution architecture (binary archive or installer)
+          required: true
+          type: string
+      responses:
+        '404':
+          description: Download not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        '302':
+          description: Redirecting to file download
+          headers:
+            Location:
+              description: Redirecting to file download
+              type: string
   /download/{channel}/{os}/{dist}/{arch}:
     x-swagger-router-controller: download
     get:
       summary: Download the latest binary distribution of node.js
       description: Download the latest binary distribution of node.js given the channel (LTS or current), operating system (win/macos/linux/source) distribution (installer/binary) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      operationId: download
       parameters:
         - name: channel
           in: path
