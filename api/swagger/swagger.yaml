@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
-  title: Hello World App
+  version: "1.0.0"
+  title: Latest Binary Distributions from nodejs.org
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths 
@@ -11,13 +11,64 @@ schemes:
   # tip: remove http to make production-grade
   - http
   - https
-# format of bodies a client can send (Content-Type)
-consumes:
-  - application/json
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+  - text/html
+  - text/text
 paths:
+  /download/{channel}/{os}/{dist}/{arch}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest binary distribution of node.js
+      description: Download the latest binary distribution of node.js given the channel (LTS or current), operating system (win/macos/linux/source) distribution (installer/binary) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      parameters:
+        - name: channel
+          in: path
+          description: The download channel (LTS or current)
+          required: true
+          type: string
+          enum:
+            - LTS
+            - current
+        - name: os
+          in: path
+          description: The operating system (win or macos or linux)
+          required: true
+          type: string
+          enum:
+            - win
+            - macos
+            - linux
+        - name: dist
+          in: path
+          description: Distribution format of download (binary archive or installer)
+          required: true
+          type: string
+          enum:
+            - installer
+            - binary
+        - name: arch
+          in: path
+          description: Distribution architecture (binary archive or installer)
+          required: true
+          type: string
+      responses:
+        '404':
+          description: Download not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        '302':
+          description: Redirecting to file download
+          headers:
+            Location:
+              description: Redirecting to file download
+              type: string
+#  /url:
+#    x-swagger-router-controller: url
+#  /help:
+#    x-swagger-router-controller: help
+              
   /hello:
     # binds a127 app logic to a route
     x-swagger-router-controller: hello_world
@@ -46,6 +97,21 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  NotFound:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  URLResponse:
+    required:
+      - url
+      - version
+    properties:
+      version:
+        type: string
+      url:
+        type: string
   HelloWorldResponse:
     required:
       - message
