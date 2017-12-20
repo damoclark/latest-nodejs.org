@@ -15,7 +15,10 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.12.3",
-    "swagger-express-mw": "^0.1.0"
+    "jsdom": "^11.5.1",
+    "superagent": "^3.8.2",
+    "swagger-express-mw": "^0.1.0",
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
