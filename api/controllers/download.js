@@ -10,7 +10,11 @@
 
   It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
+console.log('Got inside here') ;
+
 var util = require("util") ;
+
+const data = require("../../data/urls.json") ;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -36,10 +40,25 @@ module.exports = {
   Param 2: a handle to the response object
  */
 function download(req, res) {
+	console.log('Got inside download function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
-	var name = req.swagger.params.name.value || "stranger" ;
-	var hello = util.format("Hello, %s!", name) ;
+	// {channel}/{os}/{dist}/{arch}
+	let channel = req.swagger.params.channel.value || "LTS" ;
+	let os = req.swagger.params.os.value || "linux" ;
+	let dist = req.swagger.params.dist.value || "binary" ;
+	let arch = req.swagger.params.arch.value ;
 
+	let url = data[os][dist][arch] || null ;
+
+	console.log(`url=${url}`);
+
+	if(url === null) {
+		console.log(`url was null`);
+		res.type('json');               // => 'application/json'
+		res.status(404).json({"message": "A distribution of this combination does not exist for Node.js"}) ;
+	}
+
+	res.redirect(url) ;
 	// Redirect to the correct download
 	// res.redirect('/foo/bar') ;
 
@@ -49,10 +68,10 @@ function download(req, res) {
 
 	// res.status(404).json({"message": "A distribution of this combination does not exist for Node.js"}) ;
 	// this sends back a JSON response which is a single string
-
-	res.json(hello) ;
 }
 
 function download_os_arch(req, res) {
 
 }
+
+console.log('Got end here') ;

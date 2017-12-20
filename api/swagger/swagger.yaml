@@ -43,12 +43,12 @@ paths:
           description: Download not found
           schema:
             $ref: '#/definitions/NotFound'
-        '302':
-          description: Redirecting to file download
-          headers:
-            Location:
-              description: Redirecting to file download
-              type: string
+#        '302':
+#          description: Redirecting to file download
+#          headers:
+#            Location:
+#              description: Redirecting to file download
+#              type: string
   /download/{channel}/{os}/{dist}/{arch}:
     x-swagger-router-controller: download
     get:
@@ -91,12 +91,13 @@ paths:
           description: Download not found
           schema:
             $ref: '#/definitions/NotFound'
-        '302':
-          description: Redirecting to file download
-          headers:
-            Location:
-              description: Redirecting to file download
-              type: string
+#        '302':
+#          description: Redirecting to file download
+#          headers:
+#            Location:
+#              description: Redirecting to file download
+#              type: string
+
 #  /url:
 #    x-swagger-router-controller: url
 #  /help:
