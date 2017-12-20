@@ -1,4 +1,4 @@
-'use strict';
+"use strict" ;
 /*
  'use strict' is not required but helpful for turning syntactical errors into true errors in the program flow
  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
@@ -10,7 +10,7 @@
 
   It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
-var util = require('util');
+var util = require("util") ;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -25,9 +25,9 @@ var util = require('util');
   we specify that in the exports of this module that 'hello' maps to the function named 'hello'
  */
 module.exports = {
-  download: download,
-  download_os_arch: download_os_arch
-};
+	download: download,
+	download_os_arch: download_os_arch
+} ;
 
 /*
   Functions in a127 controllers used for operations should take two parameters:
@@ -36,11 +36,11 @@ module.exports = {
   Param 2: a handle to the response object
  */
 function download(req, res) {
-  // variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
-  var name = req.swagger.params.name.value || 'stranger';
-  var hello = util.format('Hello, %s!', name);
+	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
+	var name = req.swagger.params.name.value || "stranger" ;
+	var hello = util.format("Hello, %s!", name) ;
 
-  // Redirect to the correct download
+	// Redirect to the correct download
 	// res.redirect('/foo/bar') ;
 
 	// res.type('.html');              // => 'text/html'
@@ -48,9 +48,9 @@ function download(req, res) {
 	// res.type('json');               // => 'application/json'
 
 	// res.status(404).json({"message": "A distribution of this combination does not exist for Node.js"}) ;
-  // this sends back a JSON response which is a single string
+	// this sends back a JSON response which is a single string
 
-  res.json(hello);
+	res.json(hello) ;
 }
 
 function download_os_arch(req, res) {

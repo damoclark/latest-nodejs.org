@@ -9,7 +9,7 @@
     "latest",
     "swagger",
     "rummage"
-],
+  ],
   "author": "Damien Clark",
   "license": "GPL-3.0",
   "main": "app.js",
@@ -18,12 +18,14 @@
     "swagger-express-mw": "^0.1.0"
   },
   "devDependencies": {
+    "eslint": "^4.13.1",
     "should": "^7.1.0",
     "supertest": "^1.0.0"
   },
   "scripts": {
     "dev": "swagger project start",
     "swagger-edit": "swagger project edit",
+    "eslint": "eslint --fix .",
     "start": "node app.js",
     "test": "swagger project test"
   }
