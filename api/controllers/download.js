@@ -1,4 +1,4 @@
-"use strict" ;
+'use strict' ;
 /*
  'use strict' is not required but helpful for turning syntactical errors into true errors in the program flow
  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
@@ -12,9 +12,9 @@
  */
 console.log('Got inside here') ;
 
-var util = require("util") ;
+var util = require('util') ;
 
-const data = require("../../data/urls.json") ;
+const data = require('../../data/urls.json') ;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -43,19 +43,19 @@ function download(req, res) {
 	console.log('Got inside download function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
-	let channel = req.swagger.params.channel.value || "LTS" ;
-	let os = req.swagger.params.os.value || "linux" ;
-	let dist = req.swagger.params.dist.value || "binary" ;
+	let channel = req.swagger.params.channel.value || 'LTS' ;
+	let os = req.swagger.params.os.value || 'linux' ;
+	let dist = req.swagger.params.dist.value || 'binary' ;
 	let arch = req.swagger.params.arch.value ;
 
 	let url = data[os][dist][arch] || null ;
 
-	console.log(`url=${url}`);
+	console.log(`url=${url}`) ;
 
 	if(url === null) {
-		console.log(`url was null`);
-		res.type('json');               // => 'application/json'
-		res.status(404).json({"message": "A distribution of this combination does not exist for Node.js"}) ;
+		console.log('url was null') ;
+		res.type('json') ;               // => 'application/json'
+		res.status(404).json({'message': 'A distribution of this combination does not exist for Node.js'}) ;
 	}
 
 	res.redirect(url) ;
