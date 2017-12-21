@@ -12,9 +12,9 @@
  */
 console.log('Got inside here') ;
 
-const path = require('path');
+const path = require('path') ;
 
-const readcache = require('readcache');
+const readcache = require('readcache') ;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -33,22 +33,8 @@ module.exports = {
 	download_os_arch: download_os_arch
 } ;
 
-/*
-  Functions in a127 controllers used for operations should take two parameters:
-
-  Param 1: a handle to the request object
-  Param 2: a handle to the response object
- */
-function download(req, res) {
-	console.log('Got inside download function') ;
-	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
-	// {channel}/{os}/{dist}/{arch}
-	let channel = req.swagger.params.channel.value || 'lts' ;
-	let os = req.swagger.params.os.value || 'linux' ;
-	let dist = req.swagger.params.dist.value || 'binary' ;
-	let arch = req.swagger.params.arch.value ;
-
-	readcache('./data/urls.json', function (err, input, stats) {
+function downloader(res, channel, os, dist, arch) {
+	readcache('./data/urls.json', function(err, input, stats) {
 		let data = JSON.parse(input) ;
 		let url = data[channel][os][dist][arch] || null ;
 		console.log(`url=${url}`) ;
@@ -65,11 +51,9 @@ function download(req, res) {
 		let filename = path.basename(url) ;
 		console.log(`Content-Disposition: attachment; filename=${filename}`) ;
 
-		res.header('Content-Disposition',`attachment; filename=${filename}`) ;
+		res.header('Content-Disposition', `attachment; filename=${filename}`) ;
 		res.redirect(url) ;
-	});
-
-
+	}) ;
 
 	// Redirect to the correct download
 	// res.redirect('/foo/bar') ;
@@ -82,8 +66,34 @@ function download(req, res) {
 	// this sends back a JSON response which is a single string
 }
 
-function download_os_arch(req, res) {
+/*
+  Functions in a127 controllers used for operations should take two parameters:
 
+  Param 1: a handle to the request object
+  Param 2: a handle to the response object
+ */
+function download(req, res) {
+	console.log('Got inside download function') ;
+	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
+	// {channel}/{os}/{dist}/{arch}
+	let channel = req.swagger.params.channel.value || 'lts' ;
+	let os = req.swagger.params.os.value || 'linux' ;
+	let dist = req.swagger.params.dist.value || 'binary' ;
+	let arch = req.swagger.params.arch.value ;
+
+	downloader(res, channel, os, dist, arch) ;
+}
+
+function download_os_arch(req, res) {
+	console.log('Got inside download_os_arch function') ;
+	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
+	// {channel}/{os}/{dist}/{arch}
+	let channel = 'lts' ;
+	let os = req.swagger.params.os.value || 'linux' ;
+	let dist = 'binary' ;
+	let arch = req.swagger.params.arch.value ;
+
+	downloader(res, channel, os, dist, arch) ;
 }
 
 console.log('Got end here') ;
