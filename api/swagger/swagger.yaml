@@ -62,7 +62,7 @@ paths:
           required: true
           type: string
           enum:
-            - LTS
+            - lts
             - current
         - name: os
           in: path

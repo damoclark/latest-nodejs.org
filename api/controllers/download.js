@@ -43,7 +43,7 @@ function download(req, res) {
 	console.log('Got inside download function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
-	let channel = req.swagger.params.channel.value || 'LTS' ;
+	let channel = req.swagger.params.channel.value || 'lts' ;
 	let os = req.swagger.params.os.value || 'linux' ;
 	let dist = req.swagger.params.dist.value || 'binary' ;
 	let arch = req.swagger.params.arch.value ;

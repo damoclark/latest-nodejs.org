@@ -24,9 +24,9 @@
  */
 
 const fs = require('fs') ;
-const util = require('util');
+const util = require('util') ;
 
-const writeFile = util.promisify(fs.writeFile);
+const writeFile = util.promisify(fs.writeFile) ;
 
 var argv = require('yargs')
 .usage('Usage: $0 [options]')
@@ -59,7 +59,7 @@ Promise.all([
 	r.Rummage().through('https://nodejs.org/en/download/').for(njs()).go(),
 	r.Rummage().through('https://nodejs.org/en/download/current/').for(njs()).go()
 ]).then(data => {
-	return writeFile(argv.o, JSON.stringify({LTS: data[0], current: data[1]}), 'utf8') ;
+	return writeFile(argv.o, JSON.stringify({lts: data[0], current: data[1]}), 'utf8') ;
 }).then(() => {
 	console.log('Successfully written argv.o') ;
 }).catch(err => {
