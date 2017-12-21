@@ -1,5 +1,8 @@
 'use strict' ;
 
+// wget --trust-server-names 'http://localhost:10010/download/LTS/linux/binary/ARMv8'
+// curl -L -O -J 'http://localhost:10010/download/LTS/linux/binary/ARMv8'
+
 var SwaggerExpress = require('swagger-express-mw') ;
 var app = require('express')() ;
 module.exports = app ; // for testing

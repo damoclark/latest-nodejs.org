@@ -13,6 +13,7 @@
 console.log('Got inside here') ;
 
 var util = require('util') ;
+const path = require('path');
 
 const data = require('../../data/urls.json') ;
 
@@ -58,6 +59,10 @@ function download(req, res) {
 		res.status(404).json({'message': 'A distribution of this combination does not exist for Node.js'}) ;
 	}
 
+	let filename = path.basename(url) ;
+	console.log(`Content-Disposition: attachment; filename=${filename}`) ;
+
+	res.header('Content-Disposition',`attachment; filename=${filename}`) ;
 	res.redirect(url) ;
 	// Redirect to the correct download
 	// res.redirect('/foo/bar') ;
