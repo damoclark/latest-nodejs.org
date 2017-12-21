@@ -24,6 +24,10 @@
  */
 
 const fs = require('fs') ;
+const util = require('util');
+
+const writeFile = util.promisify(fs.writeFile);
+
 var argv = require('yargs')
 .usage('Usage: $0 [options]')
 .example('$0 -o data/urls.json', 'save parsed urls to given json file')
@@ -50,11 +54,14 @@ const agent = new r.agent.superagent(superagent) ;
 r.useParser(parser) ;
 r.useAgent(agent) ;
 
-// r.Rummage().through('https://nodejs.org/en/download/current/').for(njs()).then(data => {
-r.Rummage().through('https://nodejs.org/en/download/').for(njs()).then(data => {
-	fs.writeFile(argv.o, JSON.stringify(data), 'utf8', err => {
-		if (err) throw err ;
-	}) ;
+// eslint-disable-next-line no-undef
+Promise.all([
+	r.Rummage().through('https://nodejs.org/en/download/').for(njs()).go(),
+	r.Rummage().through('https://nodejs.org/en/download/current/').for(njs()).go()
+]).then(data => {
+	return writeFile(argv.o, JSON.stringify({LTS: data[0], current: data[1]}), 'utf8') ;
+}).then(() => {
+	console.log('Successfully written argv.o') ;
 }).catch(err => {
 	console.error(err) ;
 }) ;

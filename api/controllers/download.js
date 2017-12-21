@@ -12,10 +12,9 @@
  */
 console.log('Got inside here') ;
 
-var util = require('util') ;
 const path = require('path');
 
-const data = require('../../data/urls.json') ;
+const readcache = require('readcache');
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -49,21 +48,29 @@ function download(req, res) {
 	let dist = req.swagger.params.dist.value || 'binary' ;
 	let arch = req.swagger.params.arch.value ;
 
-	let url = data[os][dist][arch] || null ;
+	readcache('./data/urls.json', function (err, input, stats) {
+		let data = JSON.parse(input) ;
+		let url = data[channel][os][dist][arch] || null ;
+		console.log(`url=${url}`) ;
+		// stat
+		// { "hit": false, "mtime": 1439974339996 }
+		// { "hit": true, "mtime": 1439974339996 }
 
-	console.log(`url=${url}`) ;
+		if(url === null) {
+			console.log('url was null') ;
+			res.type('json') ;               // => 'application/json'
+			res.status(404).json({'message': 'A distribution of this combination does not exist for Node.js'}) ;
+		}
 
-	if(url === null) {
-		console.log('url was null') ;
-		res.type('json') ;               // => 'application/json'
-		res.status(404).json({'message': 'A distribution of this combination does not exist for Node.js'}) ;
-	}
+		let filename = path.basename(url) ;
+		console.log(`Content-Disposition: attachment; filename=${filename}`) ;
 
-	let filename = path.basename(url) ;
-	console.log(`Content-Disposition: attachment; filename=${filename}`) ;
+		res.header('Content-Disposition',`attachment; filename=${filename}`) ;
+		res.redirect(url) ;
+	});
 
-	res.header('Content-Disposition',`attachment; filename=${filename}`) ;
-	res.redirect(url) ;
+
+
 	// Redirect to the correct download
 	// res.redirect('/foo/bar') ;
 
