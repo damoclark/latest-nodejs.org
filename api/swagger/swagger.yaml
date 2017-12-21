@@ -15,7 +15,7 @@ schemes:
 produces:
   - application/json
   - text/html
-  - text/text
+  - text/plain
 paths:
   /download/{os}/{arch}:
     x-swagger-router-controller: download
