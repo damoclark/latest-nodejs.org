@@ -60,6 +60,9 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 	// install middleware
 	swaggerExpress.register(app) ;
 
+	// Publish the swagger API documentation (swagger.ui) via /docs
+	app.use(swaggerExpress.runner.swaggerTools.swaggerUi());
+
 	var port = process.env.PORT || 10010 ;
 	app.listen(port) ;
 
