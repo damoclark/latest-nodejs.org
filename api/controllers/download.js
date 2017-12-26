@@ -13,8 +13,8 @@
 console.log('Got inside here') ;
 
 const path = require('path') ;
-
-const readcache = require('readcache') ;
+const util = require('util') ;
+const readcache = util.promisify(require('readcache')) ;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -29,41 +29,39 @@ const readcache = require('readcache') ;
   we specify that in the exports of this module that 'hello' maps to the function named 'hello'
  */
 module.exports = {
-	download: download,
-	download_os_arch: download_os_arch
+	download,
+	download_os_arch,
+	link_os_arch,
+	link
 } ;
 
-function downloader(res, channel, os, dist, arch) {
-	readcache('./data/urls.json', function(err, input, stats) {
-		let data = JSON.parse(input) ;
-		let url = data[channel][os][dist][arch] || null ;
+async function downloader(channel, os, dist, arch) {
+	let output = null ;
+	try {
+		let data = await readcache('./data/urls.json') ;
+		data = JSON.parse(data) ;
+		let url = data[channel][os][dist][arch] ;
+		if(url === undefined)
+			throw new TypeError() ;
+		let version = data[channel].latest.node ;
 		console.log(`url=${url}`) ;
-		// stat
-		// { "hit": false, "mtime": 1439974339996 }
-		// { "hit": true, "mtime": 1439974339996 }
-
-		if(url === null) {
-			console.log('url was null') ;
-			res.type('json') ;               // => 'application/json'
-			res.status(404).json({'message': 'A distribution of this combination does not exist for Node.js'}) ;
-		}
-
 		let filename = path.basename(url) ;
-		console.log(`Content-Disposition: attachment; filename=${filename}`) ;
+		output = {url: url, filename: filename, version: version} ;
+	}
+	catch(err) {
+		if(err instanceof TypeError) {
+			let e = new Error('A distribution of this combination does not exist for Node.js') ;
+			e.code = 404 ;
+			throw e ;
+		}
+		// Otherwise some system-level error has occurred
+		let e = new Error('An internal error has occurred') ;
+		e.code = 500 ;
+		throw e ;
+	}
+	console.log(`downloader returning: ${JSON.stringify(output)}`) ;
 
-		res.header('Content-Disposition', `attachment; filename=${filename}`) ;
-		res.redirect(url) ;
-	}) ;
-
-	// Redirect to the correct download
-	// res.redirect('/foo/bar') ;
-
-	// res.type('.html');              // => 'text/html'
-	// res.type('html');               // => 'text/html'
-	// res.type('json');               // => 'application/json'
-
-	// res.status(404).json({"message": "A distribution of this combination does not exist for Node.js"}) ;
-	// this sends back a JSON response which is a single string
+	return output ;
 }
 
 /*
@@ -81,7 +79,19 @@ function download(req, res) {
 	let dist = req.swagger.params.dist.value || 'binary' ;
 	let arch = req.swagger.params.arch.value ;
 
-	downloader(res, channel, os, dist, arch) ;
+	(async () => {
+		try {
+			let data = await downloader(channel, os, dist, arch) ;
+			res.header('Content-Disposition', `attachment; filename=${data.filename}`) ;
+			res.redirect(data.url) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
 }
 
 function download_os_arch(req, res) {
@@ -93,7 +103,67 @@ function download_os_arch(req, res) {
 	let dist = 'binary' ;
 	let arch = req.swagger.params.arch.value ;
 
-	downloader(res, channel, os, dist, arch) ;
+	(async () => {
+		try {
+			let data = await downloader(channel, os, dist, arch) ;
+			res.header('Content-Disposition', `attachment; filename=${data.filename}`) ;
+			res.redirect(data.url) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
+}
+
+function link(req, res) {
+	console.log('Got inside link_os_arch function') ;
+	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
+	// {channel}/{os}/{dist}/{arch}
+	let channel = req.swagger.params.channel.value || 'lts' ;
+	let os = req.swagger.params.os.value || 'linux' ;
+	let dist = req.swagger.params.dist.value || 'binary' ;
+	let arch = req.swagger.params.arch.value ;
+
+	(async () => {
+		try {
+			let data = await downloader(channel, os, dist, arch) ;
+			console.log(`server sending: ${JSON.stringify(data)}`) ;
+			res.status(200).json(data) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
+}
+
+function link_os_arch(req, res) {
+	console.log('Got inside link_os_arch function') ;
+	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
+	// {channel}/{os}/{dist}/{arch}
+	let channel = 'lts' ;
+	let os = req.swagger.params.os.value || 'linux' ;
+	let dist = 'binary' ;
+	let arch = req.swagger.params.arch.value ;
+
+	(async () => {
+		try {
+			let data = await downloader(channel, os, dist, arch) ;
+			console.log(`server sending: ${JSON.stringify(data)}`) ;
+			res.status(200).json(data) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
 }
 
 console.log('Got end here') ;

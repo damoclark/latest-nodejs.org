@@ -34,5 +34,6 @@
     "eslint": "eslint --fix .",
     "start": "node app.js",
     "test": "swagger project test"
-  }
+  },
+  "engines" : { "node" : ">=8.0.0" }
 }

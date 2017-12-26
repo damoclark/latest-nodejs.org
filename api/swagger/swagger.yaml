@@ -98,8 +98,94 @@ paths:
           schema:
             $ref: '#/definitions/NotFound'
 
-#  /url:
-#    x-swagger-router-controller: url
+  /link/{os}/{arch}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest lts binary distribution of node.js
+      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      operationId: link_os_arch
+      parameters:
+        - name: os
+          in: path
+          description: The operating system (windows or macos or linux)
+          required: true
+          type: string
+          enum:
+            - windows
+            - macos
+            - linux
+        - name: arch
+          in: path
+          description: Distribution architecture (binary archive or installer)
+          required: true
+          type: string
+          enum:
+            - 32-bit
+            - 64-bit
+            - ARMv6
+            - ARMv7
+            - ARMv8
+      responses:
+        '404':
+          description: Download not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Link'
+  /link/{channel}/{os}/{dist}/{arch}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest lts binary distribution of node.js
+      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      operationId: link
+      parameters:
+        - name: channel
+          in: path
+          description: The download channel (LTS or current)
+          required: true
+          type: string
+          enum:
+            - lts
+            - current
+        - name: os
+          in: path
+          description: The operating system (windows or macos or linux)
+          required: true
+          type: string
+          enum:
+            - windows
+            - macos
+            - linux
+        - name: dist
+          in: path
+          description: Distribution format of download (binary archive or installer)
+          required: true
+          type: string
+          enum:
+            - installer
+            - binary
+        - name: arch
+          in: path
+          description: Distribution architecture (binary archive or installer)
+          required: true
+          type: string
+          enum:
+            - 32-bit
+            - 64-bit
+            - ARMv6
+            - ARMv7
+            - ARMv8
+      responses:
+        '404':
+          description: Download not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Link'
 
   /hello:
     # binds a127 app logic to a route
@@ -135,7 +221,7 @@ definitions:
     properties:
       message:
         type: string
-  URLResponse:
+  Link:
     required:
       - url
       - version
