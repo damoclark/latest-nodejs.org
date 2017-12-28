@@ -3,16 +3,16 @@
 // wget --trust-server-names 'http://localhost:10010/download/lts/linux/binary/ARMv8'
 // curl -L -O -J 'http://localhost:10010/download/lts/linux/binary/ARMv8'
 
-var SwaggerExpress = require('swagger-express-mw') ;
-var express = require('express') ;
-var app = express() ;
-var path = require('path') ;
-var util = require('util') ;
-var htmlToText = require('html-to-text') ;
-var fromFile = util.promisify(htmlToText.fromFile) ;
+const SwaggerExpress = require('swagger-express-mw') ;
+const express = require('express') ;
+const app = express() ;
+const path = require('path') ;
+const util = require('util') ;
+const htmlToText = require('html-to-text') ;
+const fromFile = util.promisify(htmlToText.fromFile) ;
 
 // Add useragent parser
-var useragent = require('express-useragent') ;
+const useragent = require('express-useragent') ;
 app.use(useragent.express()) ;
 
 // Load home page according to user-agent type (command line or web browser)
@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 	}
 }) ;
 // Add public directory for home page
-var options = {
+let options = {
 	dotfiles: 'ignore',
 	extensions: ['html']
 } ;
@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public'), options)) ;
 
 module.exports = app ; // for testing
 
-var config = {
+let config = {
 	appRoot: __dirname // required config
 } ;
 
@@ -63,7 +63,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 	// Publish the swagger API documentation (swagger.ui) via /docs
 	app.use(swaggerExpress.runner.swaggerTools.swaggerUi()) ;
 
-	var port = process.env.PORT || 10010 ;
+	let port = process.env.PORT || 10010 ;
 	app.listen(port) ;
 
 	if (swaggerExpress.runner.swagger.paths['/hello'])
