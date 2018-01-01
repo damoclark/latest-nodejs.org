@@ -10,8 +10,6 @@
 
   It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
-console.log('Got inside here') ;
-
 const path = require('path') ;
 const util = require('util') ;
 const readcache = util.promisify(require('readcache')) ;
@@ -58,7 +56,6 @@ async function downloader(channel, os, dist, arch) {
 		if(url === undefined)
 			throw new TypeError() ;
 		let version = data[channel].latest.node ;
-		console.log(`url=${url}`) ;
 		let filename = path.basename(url) ;
 		output = {url: url, filename: filename, version: version} ;
 	}
@@ -73,8 +70,6 @@ async function downloader(channel, os, dist, arch) {
 		e.code = 500 ;
 		throw e ;
 	}
-	console.log(`downloader returning: ${JSON.stringify(output)}`) ;
-
 	return output ;
 }
 
@@ -85,7 +80,6 @@ async function downloader(channel, os, dist, arch) {
   Param 2: a handle to the response object
  */
 function download(req, res) {
-	console.log('Got inside download function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
 	let channel = req.swagger.params.channel.value || 'lts' ;
@@ -109,7 +103,6 @@ function download(req, res) {
 }
 
 function download_os_arch(req, res) {
-	console.log('Got inside download_os_arch function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
 	let channel = 'lts' ;
@@ -133,7 +126,6 @@ function download_os_arch(req, res) {
 }
 
 function link(req, res) {
-	console.log('Got inside link_os_arch function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
 	let channel = req.swagger.params.channel.value || 'lts' ;
@@ -144,7 +136,6 @@ function link(req, res) {
 	(async () => {
 		try {
 			let data = await downloader(channel, os, dist, arch) ;
-			console.log(`server sending: ${JSON.stringify(data)}`) ;
 			res.status(200).json(data) ;
 		}
 		catch(err) {
@@ -157,7 +148,6 @@ function link(req, res) {
 }
 
 function link_os_arch(req, res) {
-	console.log('Got inside link_os_arch function') ;
 	// variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 	// {channel}/{os}/{dist}/{arch}
 	let channel = 'lts' ;
@@ -168,7 +158,6 @@ function link_os_arch(req, res) {
 	(async () => {
 		try {
 			let data = await downloader(channel, os, dist, arch) ;
-			console.log(`server sending: ${JSON.stringify(data)}`) ;
 			res.status(200).json(data) ;
 		}
 		catch(err) {
@@ -204,7 +193,6 @@ function link_source(req, res) {
 	(async () => {
 		try {
 			let data = await downloader(channel) ;
-			console.log(`server sending: ${JSON.stringify(data)}`) ;
 			res.status(200).json(data) ;
 		}
 		catch(err) {
@@ -215,6 +203,3 @@ function link_source(req, res) {
 		}
 	})() ;
 }
-
-
-console.log('Got end here') ;

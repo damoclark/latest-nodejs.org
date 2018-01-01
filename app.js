@@ -19,11 +19,8 @@ app.use(useragent.express()) ;
 // Note: this must precede app.use(express.static...) or will never be called
 app.get('/', (req, res) => {
 
-	console.log('Got inside get /') ;
 	// Determine user-agent
 	let agent = req.useragent ;
-
-	console.log(`agent=${util.inspect(agent)}`) ;
 
 	// if wget/curl then respond with plain text
 	if(agent.isBot) {
@@ -65,8 +62,4 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
 	let port = process.env.PORT || 10010 ;
 	app.listen(port) ;
-
-	if (swaggerExpress.runner.swagger.paths['/hello'])
-		console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott') ;
-
 }) ;
