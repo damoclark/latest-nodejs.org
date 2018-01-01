@@ -21,7 +21,7 @@ paths:
     x-swagger-router-controller: download
     get:
       summary: Download the latest distribution of node.js
-      description: Download the latest binary distribution of node.js given the channel (LTS or current), operating system (windows/macos/linux/source) distribution (installer/binary) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      description: Download the latest binary distribution of node.js given the channel (LTS or current), operating system (windows/macos/linux) distribution (installer/binary) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
       operationId: download
       parameters:
         - name: channel
@@ -69,7 +69,7 @@ paths:
     x-swagger-router-controller: download
     get:
       summary: Download the latest lts binary distribution of node.js
-      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
       operationId: download_os_arch
       parameters:
         - name: os
@@ -98,11 +98,32 @@ paths:
           schema:
             $ref: '#/definitions/NotFound'
 
+  /download/{channel}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest source distribution of node.js
+      description: Download the latest LTS source distribution of node.js given the distribution channel (lts/current)
+      operationId: download_source
+      parameters:
+        - name: channel
+          in: path
+          description: The download channel (LTS or current)
+          required: true
+          type: string
+          enum:
+            - lts
+            - current
+      responses:
+        '404':
+          description: Download not found
+          schema:
+            $ref: '#/definitions/NotFound'
+
   /link/{os}/{arch}:
     x-swagger-router-controller: download
     get:
       summary: Download the latest lts binary distribution of node.js
-      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
       operationId: link_os_arch
       parameters:
         - name: os
@@ -127,7 +148,7 @@ paths:
             - ARMv8
       responses:
         '404':
-          description: Download not found
+          description: Link not found
           schema:
             $ref: '#/definitions/NotFound'
         '200':
@@ -138,7 +159,7 @@ paths:
     x-swagger-router-controller: download
     get:
       summary: Download the latest lts binary distribution of node.js
-      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux/source) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
+      description: Identical to /download/lts/{os}/binary/{arch} - Download the latest LTS binary distribution of node.js given the operating system (windows/macos/linux) and architecture (32-bit/64-bit/ARMv6/ARMv7/ARMv8)
       operationId: link
       parameters:
         - name: channel
@@ -179,13 +200,35 @@ paths:
             - ARMv8
       responses:
         '404':
-          description: Download not found
+          description: Link not found
           schema:
             $ref: '#/definitions/NotFound'
         '200':
           description: OK
           schema:
             $ref: '#/definitions/Link'
+
+  /link/{channel}:
+    x-swagger-router-controller: download
+    get:
+      summary: Download the latest source distribution of node.js
+      description: Download the latest LTS source distribution of node.js given the distribution channel (lts/current)
+      operationId: link_source
+      parameters:
+        - name: channel
+          in: path
+          description: The download channel (LTS or current)
+          required: true
+          type: string
+          enum:
+            - lts
+            - current
+      responses:
+        '404':
+          description: Link not found
+          schema:
+            $ref: '#/definitions/NotFound'
+
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions

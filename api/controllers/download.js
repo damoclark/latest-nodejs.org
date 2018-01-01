@@ -32,6 +32,8 @@ module.exports = {
 	download,
 	download_os_arch,
 	link_os_arch,
+	download_source,
+	link_source,
 	link
 } ;
 
@@ -40,7 +42,19 @@ async function downloader(channel, os, dist, arch) {
 	try {
 		let data = await readcache('./data/urls.json') ;
 		data = JSON.parse(data) ;
-		let url = data[channel][os][dist][arch] ;
+		let url = data[channel] ;
+		if(os !== undefined) {
+			url = url[os] ;
+			if(dist !== undefined) {
+				url = url[dist] ;
+				if(arch !== undefined) {
+					url = url[arch] ;
+				}
+			}
+		}
+		else {
+			url = url.source ;
+		}
 		if(url === undefined)
 			throw new TypeError() ;
 		let version = data[channel].latest.node ;
@@ -165,5 +179,42 @@ function link_os_arch(req, res) {
 		}
 	})() ;
 }
+
+function download_source(req, res) {
+	let channel = req.swagger.params.channel.value || 'lts' ;
+
+	(async () => {
+		try {
+			let data = await downloader(channel) ;
+			res.header('Content-Disposition', `attachment; filename=${data.filename}`) ;
+			res.redirect(data.url) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
+}
+
+function link_source(req, res) {
+	let channel = req.swagger.params.channel.value || 'lts' ;
+
+	(async () => {
+		try {
+			let data = await downloader(channel) ;
+			console.log(`server sending: ${JSON.stringify(data)}`) ;
+			res.status(200).json(data) ;
+		}
+		catch(err) {
+			console.warn(err) ;
+			res.status(err.code) ;
+			res.type('json') ;               // => 'application/json'
+			res.json({'message': err.message}) ;
+		}
+	})() ;
+}
+
 
 console.log('Got end here') ;
