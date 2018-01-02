@@ -70,9 +70,9 @@ async function downloader(channel, os, dist, arch) {
 			url = url[os] ;
 			if(dist !== undefined) {
 				url = url[dist] ;
-				if(arch !== undefined) {
+				if(arch !== undefined) 
 					url = url[arch] ;
-				}
+				
 			}
 		}
 		else {
