@@ -27,6 +27,7 @@ const fs = require('fs') ;
 const util = require('util') ;
 
 const writeFile = util.promisify(fs.writeFile) ;
+const stat = util.promisify(fs.stat) ;
 
 var argv = require('yargs')
 .usage('Usage: $0 [options]')
@@ -37,7 +38,7 @@ var argv = require('yargs')
 .demandOption(['o'])
 .help('h')
 .alias('h', 'help')
-.epilog('copyright 2017 Damien Clark')
+.epilog('copyright 2018 Damien Clark')
 .argv ;
 
 const r = require('rummage') ;
@@ -46,23 +47,63 @@ const njs = require('rm-nodejs-download') ;
 
 const jsdom = require('jsdom/lib/old-api') ;
 
-const superagent = require('superagent') ;
+const agent = require('superagent') ;
 
+// Make use of await
+(async () => {
+// Get modification timestamp of current data (to compare with current versions on website)
+let st = await stat(argv.o) ;
+let d = new Date(st.mtime) ;
+
+// Configure rummage
 const parser = new r.parser.jsdom(jsdom) ;
-const agent = new r.agent.superagent(superagent) ;
-
 r.useParser(parser) ;
-r.useAgent(agent) ;
+const superagent = new r.agent.superagent(agent) ;
+r.useAgent(superagent) ;
 
-// eslint-disable-next-line no-undef
-Promise.all([
-	r.Rummage().through('https://nodejs.org/en/download/').for(njs()).go(),
-	r.Rummage().through('https://nodejs.org/en/download/current/').for(njs()).go()
-]).then(data => {
-	return writeFile(argv.o, JSON.stringify({lts: data[0], current: data[1]}), 'utf8') ;
-}).then(() => {
-	console.log('Successfully written argv.o') ;
-}).catch(err => {
-	console.error(err) ;
-}) ;
+// Check if either page has been updated since last time
+if(await refresh(d)) {
+	try {
+		// eslint-disable-next-line no-undef
+		let data = await Promise.all([
+			r.Rummage().through('https://nodejs.org/en/download/').for(njs()).go(),
+			r.Rummage().through('https://nodejs.org/en/download/current/').for(njs()).go()
+		]) ;
+		await writeFile(argv.o, JSON.stringify({lts: data[0], current: data[1]}), 'utf8') ;
 
+		console.log(`Successfully written ${argv.o}`) ;
+	}
+	catch(err) {
+		console.error(err) ;
+	}
+}
+else {
+	console.log('No changes since last update') ;
+}
+})() ;
+
+/**
+ * Send head requests to server for both pages and return true if either has changed since mtime
+ * @param {Date} mtime The time when the data last changed, to compare with current time
+ * @return {Promise<boolean>}
+ */
+async function refresh(mtime) {
+	let result1 = true ;
+	let result2 = true ;
+	try {
+		await agent.head('https://nodejs.org/en/download/').set('If-Modified-Since', mtime.toUTCString()) ;
+	}
+	catch(res) {
+		if(res.status == 304)
+			result1 = false ; // No update necessary
+	}
+
+	try {
+		await agent.head('https://nodejs.org/en/download/current/').set('If-Modified-Since', mtime.toUTCString()) ;
+	}
+	catch(res) {
+		if(res.status == 304)
+			result2 = false ; // No update necessary
+	}
+	return (result1 || result2) ; // Return true if at least one requires an update
+}
