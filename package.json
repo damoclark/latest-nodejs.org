@@ -20,6 +20,11 @@
     "url": "https://damos.world"
   },
   "license": "Apache-2.0",
+  "repository": {
+    "url": "git+https://github.com/damoclark/latest-nodejs.org.git",
+    "type": "git"
+  },
+  "bugs": "https://github.com/damoclark/latest-nodejs.org/issues",
   "main": "app.js",
   "dependencies": {
     "express": "^4.12.3",
