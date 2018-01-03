@@ -52,8 +52,15 @@ const agent = require('superagent') ;
 // Make use of await
 (async () => {
 // Get modification timestamp of current data (to compare with current versions on website)
-let st = await stat(argv.o) ;
-let d = new Date(st.mtime) ;
+let st ;
+let d ;
+try {
+	st = await stat(argv.o) ;
+	d = new Date(st.mtime) ;
+}
+catch (err) { // Assume file not created yet, so set time to Unix epoch
+	d = new Date(0) ;
+}
 
 // Configure rummage
 const parser = new r.parser.jsdom(jsdom) ;
