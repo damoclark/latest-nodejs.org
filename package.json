@@ -8,9 +8,17 @@
     "api",
     "latest",
     "swagger",
-    "rummage"
+    "download",
+    "vagrant",
+    "docker",
+    "automation",
+    "deployment"
   ],
-  "author": "Damien Clark",
+  "author": {
+    "name": "Damien Clark",
+    "email": "damo.clarky@gmail.com",
+    "url": "https://damos.world"
+  },
   "license": "Apache-2.0",
   "main": "app.js",
   "dependencies": {
