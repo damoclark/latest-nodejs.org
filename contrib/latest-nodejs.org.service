@@ -12,8 +12,8 @@ Group=software
 WorkingDirectory=/var/www/latest-nodejs.org
 Nice=0
 Environment="PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/node/bin"
-Environment="port=3001"
-Environment="ip=localhost"
+Environment="PORT=3001"
+Environment="IP=localhost"
 ExecStart=/usr/bin/env node app.js
 # Use SIGINT to stop
 KillSignal=SIGINT

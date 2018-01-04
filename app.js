@@ -86,5 +86,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 	app.use(swaggerExpress.runner.swaggerTools.swaggerUi()) ;
 
 	let port = process.env.PORT || 10010 ;
-	app.listen(port) ;
+	let host = process.env.IP || 'localhost' ;
+	app.listen(port, host) ;
 }) ;
